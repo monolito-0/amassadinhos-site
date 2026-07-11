@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amassadinhos — músicas infantis em massinha</title>
+<meta name="description" content="Amassadinhos: clipes musicais infantis em estilo massinha (claymation), feitos com carinho para os pequenos.">
+<meta property="og:title" content="Amassadinhos — músicas infantis em massinha">
+<meta property="og:description" content="Clipes musicais infantis em estilo massinha, feitos com carinho para os pequenos.">
+<meta property="og:image" content="assets/banner.png">
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FBF3E4;
+    --card:#F3E3C8;
+    --ink:#5B3A1E;
+    --ink-soft:#8A6B4D;
+    --orange:#E2703A;
+    --orange-soft:#F0A03C;
+    --green:#AFCF8F;
+    --green-bg:#E4F0D8;
+    --green-ink:#3E5C2A;
+    --pink:#F2B8CD;
+    --pink-bg:#FAE4EC;
+    --pink-ink:#7C3B57;
+    --blue:#A9CDEB;
+    --blue-bg:#E0EDF8;
+    --blue-ink:#2E5578;
+    --yellow:#F6C45F;
+    --yellow-bg:#FBEBC9;
+    --yellow-ink:#7A5410;
+    --lav-bg:#EBE7FA;
+    --lav-ink:#4E3D8F;
+    --radius:22px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Baloo 2',system-ui,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.45;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+
+  /* ---------- header ---------- */
+  header{padding:18px 0}
+  .nav{display:flex;align-items:center;gap:14px}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
+  .brand img{width:52px;height:52px;border-radius:50%;object-fit:cover;background:var(--card)}
+  .brand span{font-size:1.5rem;font-weight:700;letter-spacing:.01em}
+  nav.menu{margin-left:auto;display:flex;gap:26px}
+  nav.menu a{text-decoration:none;color:var(--ink-soft);font-weight:600;font-size:1.02rem;transition:color .15s}
+  nav.menu a:hover{color:var(--ink)}
+  .btn-yt{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--orange);color:#fff;text-decoration:none;
+    font-weight:700;padding:9px 20px;border-radius:999px;
+    transition:transform .12s,box-shadow .12s;font-size:.98rem;
+  }
+  .btn-yt:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(226,112,58,.35)}
+
+  /* ---------- banner ---------- */
+  .banner{
+    border-radius:var(--radius);
+    overflow:hidden;
+    margin:6px 0 26px;
+    background:var(--card);
+  }
+  .banner img{display:block;width:100%;height:auto}
+
+  /* ---------- hero / novo vídeo ---------- */
+  .hero{
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:34px 34px 30px;
+    margin-bottom:26px;
+  }
+  .tag{
+    display:inline-block;background:var(--orange-soft);color:#fff;
+    font-weight:700;font-size:.9rem;padding:5px 16px;border-radius:999px;
+    margin-bottom:14px;
+  }
+  .hero h1{font-size:2.1rem;font-weight:800;line-height:1.15;margin-bottom:8px}
+  .hero p{color:var(--ink-soft);font-size:1.08rem;max-width:640px;margin-bottom:22px}
+  .player{
+    position:relative;border-radius:18px;overflow:hidden;
+    aspect-ratio:16/9;background:#E4C99A;
+  }
+  .player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+  /* ---------- grid de vídeos ---------- */
+  .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:22px;margin-bottom:26px}
+  .card{
+    border-radius:var(--radius);padding:22px;
+    text-decoration:none;display:block;
+    transition:transform .15s,box-shadow .15s;
+  }
+  .card:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(91,58,30,.12)}
+  .card .thumb{
+    border-radius:14px;aspect-ratio:16/9;overflow:hidden;margin-bottom:14px;
+  }
+  .card .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .card h3{font-size:1.15rem;font-weight:700}
+  .card.wide{grid-column:span 4}
+  .card.narrow{grid-column:span 2}
+  .c-green{background:var(--green-bg);color:var(--green-ink)}
+  .c-green .thumb{background:var(--green)}
+  .c-pink{background:var(--pink-bg);color:var(--pink-ink)}
+  .c-pink .thumb{background:var(--pink)}
+  .c-blue{background:var(--blue-bg);color:var(--blue-ink)}
+  .c-blue .thumb{background:var(--blue)}
+  .c-yellow{background:var(--yellow-bg);color:var(--yellow-ink)}
+  .c-yellow .thumb{background:var(--yellow)}
+
+  /* ---------- compilados ---------- */
+  .strip{
+    background:var(--lav-bg);color:var(--lav-ink);
+    border-radius:var(--radius);padding:26px 32px;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    text-decoration:none;margin-bottom:26px;
+    transition:transform .15s,box-shadow .15s;
+  }
+  .strip:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(78,61,143,.15)}
+  .strip h2{font-size:1.35rem;font-weight:700}
+  .strip p{font-weight:600;opacity:.8}
+  .strip .arrow{font-size:1.6rem}
+
+  /* ---------- sobre ---------- */
+  .about{
+    background:#FFF7EA;border-radius:var(--radius);
+    padding:34px;margin-bottom:26px;
+  }
+  .about h2{font-size:1.6rem;font-weight:800;margin-bottom:10px}
+  .about p{color:var(--ink-soft);font-size:1.05rem;max-width:720px}
+
+  /* ---------- newsletter ---------- */
+  .news{
+    background:#FAE3D3;border:1px solid #F3C9AF;
+    border-radius:var(--radius);padding:22px 28px;
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+    margin-bottom:34px;
+  }
+  .news p{font-weight:600;color:var(--ink);flex:1;min-width:200px}
+  .news form{display:flex;gap:10px;flex-wrap:wrap}
+  .news input{
+    font-family:inherit;font-size:1rem;padding:10px 18px;
+    border-radius:999px;border:1px solid #E8B896;background:#fff;
+    color:var(--ink);min-width:220px;
+  }
+  .news input:focus{outline:2px solid var(--orange)}
+  .news button{
+    font-family:inherit;font-size:1rem;font-weight:700;
+    background:var(--orange);color:#fff;border:0;
+    padding:10px 26px;border-radius:999px;cursor:pointer;
+    transition:transform .12s;
+  }
+  .news button:hover{transform:translateY(-2px)}
+
+  footer{
+    text-align:center;color:var(--ink-soft);
+    font-weight:600;padding:10px 0 40px;font-size:.95rem;
+  }
+  footer a{color:var(--orange);text-decoration:none}
+
+  @media(max-width:760px){
+    nav.menu{display:none}
+    .hero{padding:24px 22px}
+    .hero h1{font-size:1.6rem}
+    .card.wide,.card.narrow{grid-column:span 6}
+    .strip{flex-direction:column;align-items:flex-start}
+  }
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <div class="nav">
+    <a class="brand" href="#">
+      <img src="assets/logo.png" alt="Logo Amassadinhos" onerror="this.style.visibility='hidden'">
+      <span>amassadinhos</span>
+    </a>
+    <nav class="menu">
+      <a href="#videos">vídeos</a>
+      <a href="#compilados">compilados</a>
+      <a href="#sobre">sobre nós</a>
+    </nav>
+    <a class="btn-yt" id="btn-yt" href="#" target="_blank" rel="noopener">▶ YouTube</a>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="banner">
+    <img src="assets/banner.png" alt="Amassadinhos — letras de massinha com capivara, sol e flores" onerror="this.parentElement.style.display='none'">
+  </div>
+
+  <section class="hero" id="novo">
+    <span class="tag">novo vídeo</span>
+    <h1 id="hero-title">bichos da fazenda no forró</h1>
+    <p id="hero-desc">seis bichos do sertão, um sanfoneiro coelho e muita zoada boa</p>
+    <div class="player" id="hero-player"></div>
+  </section>
+
+  <section class="grid" id="videos"></section>
+
+  <a class="strip" id="compilados" href="#" target="_blank" rel="noopener">
+    <div>
+      <h2>compilados amassadinhos</h2>
+      <p>vol. 1 e vol. 2 disponíveis</p>
+    </div>
+    <span class="arrow">→</span>
+  </a>
+
+  <section class="about" id="sobre">
+    <h2>sobre nós</h2>
+    <p>O Amassadinhos é um canal de clipes musicais infantis feitos em estilo
+    massinha de modelar. Bichinhos fofos, cores suaves e músicas para cantar,
+    dançar e aprender — tudo criado com muito carinho para os pequenos
+    (e para quem cuida deles).</p>
+  </section>
+
+  <div class="news">
+    <p>novidades do canal por e-mail</p>
+    <!-- Para ativar de verdade: crie um form gratuito no https://formspree.io e troque a action abaixo -->
+    <form action="https://formspree.io/f/SEU_ID_AQUI" method="POST">
+      <input type="email" name="email" placeholder="seu e-mail" required>
+      <button type="submit">quero receber</button>
+    </form>
+  </div>
+
+</main>
+
+<footer>
+  feito com massinha e carinho · <a id="foot-yt" href="#" target="_blank" rel="noopener">Amassadinhos no YouTube</a>
+</footer>
+
+<script>
+/* ==========================================================
+   CONFIGURAÇÃO — edite só este bloco
+   ==========================================================
+   - channelUrl: link do canal no YouTube
+   - hero.id: ID do vídeo em destaque (o que vem depois de
+     "watch?v=" na URL do YouTube). "" mostra só o fundo colorido.
+   - videos: os 4 cards. id = ID do vídeo ("" = sem thumbnail).
+   - playlistUrl: link da playlist dos compilados.
+*/
+const CONFIG = {
+  channelUrl: "https://www.youtube.com/@amassadinhos",
+  hero: {
+    title: "bichos da fazenda no forró",
+    desc: "seis bichos do sertão, um sanfoneiro coelho e muita zoada boa",
+    id: ""
+  },
+  videos: [
+    { title: "borboletinha",          id: "", color: "c-green",  size: "wide"   },
+    { title: "colo de mãe",           id: "", color: "c-pink",   size: "narrow" },
+    { title: "medo do escuro",        id: "", color: "c-blue",   size: "narrow" },
+    { title: "festa junina infantil", id: "", color: "c-yellow", size: "wide"   }
+  ],
+  playlistUrl: ""
+};
+/* ========================================================== */
+
+document.getElementById('btn-yt').href = CONFIG.channelUrl;
+document.getElementById('foot-yt').href = CONFIG.channelUrl;
+document.getElementById('hero-title').textContent = CONFIG.hero.title;
+document.getElementById('hero-desc').textContent = CONFIG.hero.desc;
+
+if (CONFIG.hero.id) {
+  document.getElementById('hero-player').innerHTML =
+    `<iframe src="https://www.youtube-nocookie.com/embed/${CONFIG.hero.id}"
+      title="${CONFIG.hero.title}" allowfullscreen
+      allow="accelerometer; encrypted-media; picture-in-picture"></iframe>`;
+}
+
+const grid = document.getElementById('videos');
+grid.innerHTML = CONFIG.videos.map(v => {
+  const href = v.id ? `https://www.youtube.com/watch?v=${v.id}` : CONFIG.channelUrl;
+  const thumb = v.id
+    ? `<img src="https://img.youtube.com/vi/${v.id}/hqdefault.jpg" alt="${v.title}" loading="lazy">`
+    : "";
+  return `<a class="card ${v.color} ${v.size}" href="${href}" target="_blank" rel="noopener">
+      <div class="thumb">${thumb}</div>
+      <h3>${v.title}</h3>
+    </a>`;
+}).join("");
+
+if (CONFIG.playlistUrl) document.getElementById('compilados').href = CONFIG.playlistUrl;
+</script>
+</body>
+</html>
