@@ -240,14 +240,8 @@
 
 <script>
 /* ==========================================================
-   CONFIGURAÇÃO — edite só este bloco
-   ==========================================================
-   - channelUrl: link do canal no YouTube
-   - hero.id: ID do vídeo em destaque (o que vem depois de
-     "watch?v=" na URL do YouTube). "" mostra só o fundo colorido.
-   - videos: os 4 cards. id = ID do vídeo ("" = sem thumbnail).
-   - playlistUrl: link da playlist dos compilados.
-*/
+   CONFIGURAÇÃO — fallback caso a API não responda
+   ========================================================== */
 const CONFIG = {
   channelUrl: "https://www.youtube.com/@amassadinhos",
   hero: {
@@ -267,27 +261,54 @@ const CONFIG = {
 
 document.getElementById('btn-yt').href = CONFIG.channelUrl;
 document.getElementById('foot-yt').href = CONFIG.channelUrl;
-document.getElementById('hero-title').textContent = CONFIG.hero.title;
-document.getElementById('hero-desc').textContent = CONFIG.hero.desc;
 
-if (CONFIG.hero.id) {
-  document.getElementById('hero-player').innerHTML =
-    `<iframe src="https://www.youtube-nocookie.com/embed/${CONFIG.hero.id}"
-      title="${CONFIG.hero.title}" allowfullscreen
-      allow="accelerometer; encrypted-media; picture-in-picture"></iframe>`;
+const COLORS = ["c-green", "c-pink", "c-blue", "c-yellow"];
+const SIZES  = ["wide", "narrow", "narrow", "wide"];
+
+function renderGrid(videos) {
+  document.getElementById('videos').innerHTML = videos.slice(0, 4).map((v, i) => {
+    const href = v.id ? `https://www.youtube.com/watch?v=${v.id}` : CONFIG.channelUrl;
+    const src = v.thumb || (v.id ? `https://img.youtube.com/vi/${v.id}/hqdefault.jpg` : "");
+    const thumb = src ? `<img src="${src}" alt="" loading="lazy">` : "";
+    return `<a class="card ${v.color || COLORS[i % 4]} ${v.size || SIZES[i % 4]}" href="${href}" target="_blank" rel="noopener">
+        <div class="thumb">${thumb}</div>
+        <h3>${v.title}</h3>
+      </a>`;
+  }).join("");
 }
 
-const grid = document.getElementById('videos');
-grid.innerHTML = CONFIG.videos.map(v => {
-  const href = v.id ? `https://www.youtube.com/watch?v=${v.id}` : CONFIG.channelUrl;
-  const thumb = v.id
-    ? `<img src="https://img.youtube.com/vi/${v.id}/hqdefault.jpg" alt="${v.title}" loading="lazy">`
-    : "";
-  return `<a class="card ${v.color} ${v.size}" href="${href}" target="_blank" rel="noopener">
-      <div class="thumb">${thumb}</div>
-      <h3>${v.title}</h3>
-    </a>`;
-}).join("");
+function renderHero(v) {
+  document.getElementById('hero-title').textContent = v.title;
+  document.getElementById('hero-desc').textContent = v.desc || v.description || "";
+  if (v.id) {
+    document.getElementById('hero-player').innerHTML =
+      `<iframe src="https://www.youtube-nocookie.com/embed/${v.id}"
+        title="${v.title}" allowfullscreen
+        allow="accelerometer; encrypted-media; picture-in-picture"></iframe>`;
+  }
+}
+
+// Vídeos automáticos via /api/videos (YouTube Data API).
+// Se a API falhar (ex: abrindo o HTML localmente), usa o CONFIG acima.
+async function loadVideos() {
+  try {
+    const resp = await fetch('/api/videos');
+    if (!resp.ok) throw new Error('api ' + resp.status);
+    const data = await resp.json();
+    if (!data.videos || !data.videos.length) throw new Error('sem vídeos');
+
+    renderHero(data.videos[0]);          // mais recente vira o destaque
+    renderGrid(data.videos.slice(1));    // próximos 4 viram os cards
+    if (data.channel && data.channel.url) {
+      document.getElementById('btn-yt').href = data.channel.url;
+      document.getElementById('foot-yt').href = data.channel.url;
+    }
+  } catch (e) {
+    renderHero(CONFIG.hero);             // fallback estático
+    renderGrid(CONFIG.videos);
+  }
+}
+loadVideos();
 
 if (CONFIG.playlistUrl) document.getElementById('compilados').href = CONFIG.playlistUrl;
 </script>

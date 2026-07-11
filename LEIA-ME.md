@@ -9,14 +9,20 @@ Na pasta `assets/`, salve:
 - `assets/logo.png` — o logo do canal (a imagem quadrada 2048×2048)
 - `assets/banner.png` — o cabeçalho do YouTube (versão 16:9 fica melhor)
 
-## 2. Configure os links
+## 2. Vídeos automáticos (YouTube Data API)
 
-Abra o `index.html` e procure o bloco `CONFIG` no final do arquivo. Ali você edita:
+A função `api/videos.js` busca os uploads do canal e o site se monta sozinho:
+o vídeo mais recente vira o destaque ("novo vídeo") e os 4 seguintes viram os cards.
+Atualiza a cada 1h (cache na edge — gasta ~2 unidades/hora da cota de 10.000/dia).
 
-- `channelUrl` — URL do canal no YouTube
-- `hero.id` — ID do vídeo em destaque (o código depois de `watch?v=` na URL)
-- `videos` — título e ID de cada um dos 4 cards (a thumbnail vem do YouTube automaticamente)
-- `playlistUrl` — link da playlist dos compilados
+Variáveis de ambiente no Vercel (Settings → Environment Variables):
+
+- `YOUTUBE_API_KEY` (obrigatória) — sua chave. **O nome precisa ser exatamente esse.**
+- `YOUTUBE_CHANNEL_HANDLE` (opcional) — handle do canal sem o @. Padrão: `amassadinhos`.
+- `YOUTUBE_CHANNEL_ID` (opcional) — ID `UC...` do canal; se definido, ignora o handle.
+
+Se a API falhar, o site cai no bloco `CONFIG` no fim do `index.html` (fallback
+estático — ali também fica o `playlistUrl` dos compilados).
 
 ## 3. Publique no Vercel
 
