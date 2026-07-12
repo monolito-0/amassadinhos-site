@@ -34,19 +34,27 @@ export default async function handler(req, res) {
     const channel = chData.items[0];
     const uploadsPlaylist = channel.contentDetails.relatedPlaylists.uploads;
 
-    // 2. Buscar os uploads mais recentes
-    const plResp = await fetch(
-      `${API}/playlistItems?part=snippet&playlistId=${uploadsPlaylist}&maxResults=10&key=${key}`
-    );
-    const plData = await plResp.json();
-    if (!plResp.ok) {
-      return res.status(502).json({
-        error: "Erro ao buscar vídeos",
-        details: plData.error?.message || null,
-      });
-    }
+    // 2. Buscar TODOS os uploads (paginado, até 200 vídeos)
+    let items = [];
+    let pageToken = "";
+    do {
+      const plResp = await fetch(
+        `${API}/playlistItems?part=snippet&playlistId=${uploadsPlaylist}&maxResults=50` +
+          (pageToken ? `&pageToken=${pageToken}` : "") +
+          `&key=${key}`
+      );
+      const plData = await plResp.json();
+      if (!plResp.ok) {
+        return res.status(502).json({
+          error: "Erro ao buscar vídeos",
+          details: plData.error?.message || null,
+        });
+      }
+      items = items.concat(plData.items || []);
+      pageToken = plData.nextPageToken || "";
+    } while (pageToken && items.length < 200);
 
-    const videos = (plData.items || [])
+    const videos = items
       .filter((i) => i.snippet?.resourceId?.videoId)
       .map((i) => {
         const s = i.snippet;

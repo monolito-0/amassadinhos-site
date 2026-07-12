@@ -50,7 +50,7 @@
   header{padding:18px 0}
   .nav{display:flex;align-items:center;gap:14px}
   .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
-  .brand img{width:52px;height:52px;border-radius:50%;object-fit:cover;background:var(--card)}
+  .brand img{width:52px;height:52px;object-fit:contain}
   .brand span{font-size:1.5rem;font-weight:700;letter-spacing:.01em}
   nav.menu{margin-left:auto;display:flex;gap:26px}
   nav.menu a{text-decoration:none;color:var(--ink-soft);font-weight:600;font-size:1.02rem;transition:color .15s}
@@ -124,10 +124,15 @@
     text-decoration:none;margin-bottom:26px;
     transition:transform .15s,box-shadow .15s;
   }
-  .strip:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(78,61,143,.15)}
   .strip h2{font-size:1.35rem;font-weight:700}
   .strip p{font-weight:600;opacity:.8}
-  .strip .arrow{font-size:1.6rem}
+  .comp-links{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+  .comp-links a{
+    background:#fff;color:var(--lav-ink);text-decoration:none;
+    font-weight:700;padding:9px 20px;border-radius:999px;font-size:.95rem;
+    transition:transform .12s,box-shadow .12s;
+  }
+  .comp-links a:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(78,61,143,.25)}
 
   /* ---------- sobre ---------- */
   .about{
@@ -207,13 +212,13 @@
 
   <section class="grid" id="videos"></section>
 
-  <a class="strip" id="compilados" href="#" target="_blank" rel="noopener">
+  <section class="strip" id="compilados" hidden>
     <div>
       <h2>compilados amassadinhos</h2>
-      <p>vol. 1 e vol. 2 disponíveis</p>
+      <p>maratona de clipes pra deixar tocando</p>
     </div>
-    <span class="arrow">→</span>
-  </a>
+    <div class="comp-links" id="comp-links"></div>
+  </section>
 
   <section class="about" id="sobre">
     <h2>sobre nós</h2>
@@ -225,8 +230,12 @@
 
   <div class="news">
     <p>novidades do canal por e-mail</p>
-    <!-- Para ativar de verdade: crie um form gratuito no https://formspree.io e troque a action abaixo -->
-    <form action="https://formspree.io/f/SEU_ID_AQUI" method="POST">
+    <!-- FormSubmit: os cadastros chegam no e-mail do canal.
+         No primeiro envio, o FormSubmit manda um e-mail de confirmação
+         pro amassadinhos.oficial@gmail.com — clique em "Activate" nele. -->
+    <form action="https://formsubmit.co/amassadinhos.oficial@gmail.com" method="POST">
+      <input type="hidden" name="_subject" value="Novo inscrito na newsletter do site">
+      <input type="hidden" name="_template" value="table">
       <input type="email" name="email" placeholder="seu e-mail" required>
       <button type="submit">quero receber</button>
     </form>
@@ -235,7 +244,7 @@
 </main>
 
 <footer>
-  feito com massinha e carinho · <a id="foot-yt" href="#" target="_blank" rel="noopener">Amassadinhos no YouTube</a>
+  feito com massinha e carinho · <a id="foot-yt" href="#" target="_blank" rel="noopener">Amassadinhos no YouTube</a> · <a href="mailto:amassadinhos.oficial@gmail.com">amassadinhos.oficial@gmail.com</a>
 </footer>
 
 <script>
@@ -266,7 +275,7 @@ const COLORS = ["c-green", "c-pink", "c-blue", "c-yellow"];
 const SIZES  = ["wide", "narrow", "narrow", "wide"];
 
 function renderGrid(videos) {
-  document.getElementById('videos').innerHTML = videos.slice(0, 4).map((v, i) => {
+  document.getElementById('videos').innerHTML = videos.map((v, i) => {
     const href = v.id ? `https://www.youtube.com/watch?v=${v.id}` : CONFIG.channelUrl;
     const src = v.thumb || (v.id ? `https://img.youtube.com/vi/${v.id}/hqdefault.jpg` : "");
     const thumb = src ? `<img src="${src}" alt="" loading="lazy">` : "";
@@ -297,8 +306,20 @@ async function loadVideos() {
     const data = await resp.json();
     if (!data.videos || !data.videos.length) throw new Error('sem vídeos');
 
-    renderHero(data.videos[0]);          // mais recente vira o destaque
-    renderGrid(data.videos.slice(1));    // próximos 4 viram os cards
+    // separa compilados (palavra "compilado" no título) do catálogo
+    const comps = data.videos.filter(v => /compilado/i.test(v.title));
+    const clips = data.videos.filter(v => !/compilado/i.test(v.title));
+
+    renderHero(clips[0] || data.videos[0]);   // clipe mais recente vira o destaque
+    renderGrid(clips.slice(1));               // demais clipes viram o catálogo
+
+    if (comps.length) {
+      document.getElementById('comp-links').innerHTML = comps.map(v =>
+        `<a href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener">▶ ${v.title}</a>`
+      ).join("");
+      document.getElementById('compilados').hidden = false;
+    }
+
     if (data.channel && data.channel.url) {
       document.getElementById('btn-yt').href = data.channel.url;
       document.getElementById('foot-yt').href = data.channel.url;
@@ -309,8 +330,6 @@ async function loadVideos() {
   }
 }
 loadVideos();
-
-if (CONFIG.playlistUrl) document.getElementById('compilados').href = CONFIG.playlistUrl;
 </script>
 </body>
 </html>
