@@ -339,9 +339,7 @@
     <!-- FormSubmit: os cadastros chegam no e-mail do canal.
          No primeiro envio, o FormSubmit manda um e-mail de confirmação
          pro amassadinhos.oficial@gmail.com — clique em "Activate" nele. -->
-    <form action="https://formsubmit.co/amassadinhos.oficial@gmail.com" method="POST">
-      <input type="hidden" name="_subject" value="Novo inscrito na newsletter do site">
-      <input type="hidden" name="_template" value="table">
+    <form id="news-form">
       <input type="email" name="email" placeholder="seu e-mail" required>
       <button type="submit">quero receber</button>
     </form>
@@ -501,6 +499,34 @@ document.addEventListener('click', e => {
   if (card && card.dataset.video && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
     e.preventDefault();
     openLightbox(card.dataset.video);
+  }
+});
+
+// Newsletter: envio sem sair da página (FormSubmit AJAX)
+document.getElementById('news-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const form = e.target;
+  const btn = form.querySelector('button');
+  btn.disabled = true;
+  btn.textContent = 'enviando…';
+  try {
+    const resp = await fetch('https://formsubmit.co/ajax/amassadinhos.oficial@gmail.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        email: form.email.value,
+        _subject: 'Novo inscrito na newsletter do site',
+        _template: 'table',
+        _captcha: 'false'
+      })
+    });
+    if (!resp.ok) throw new Error('falha no envio');
+    document.querySelector('.news').innerHTML =
+      '<p style="text-align:center;width:100%">💌 e-mail recebido! obrigado — novidades do canal em breve na sua caixinha.</p>';
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = 'quero receber';
+    alert('Ops, não consegui enviar agora. Tenta de novo daqui a pouco?');
   }
 });
 
