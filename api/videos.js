@@ -64,7 +64,8 @@ export default async function handler(req, res) {
           title: s.title,
           description: (s.description || "").split("\n")[0].slice(0, 140),
           publishedAt: s.publishedAt,
-          thumb: (t.maxres || t.standard || t.high || t.medium || t.default)?.url || null,
+          // só tamanhos 16:9 (maxres/medium) — high/standard são 4:3 com barras pretas
+          thumb: (t.maxres || t.medium || t.default)?.url || null,
         };
       });
 
