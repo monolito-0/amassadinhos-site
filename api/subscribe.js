@@ -14,9 +14,15 @@ export default async function handler(req, res) {
   }
 
   try {
+    const origin = req.headers.origin || `https://${req.headers.host}`;
     const resp = await fetch(`https://formsubmit.co/ajax/${DEST}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Origin: origin,
+        Referer: origin + "/",
+      },
       body: JSON.stringify({
         email,
         _subject: "Novo inscrito na newsletter do site",
@@ -24,9 +30,15 @@ export default async function handler(req, res) {
         _captcha: "false",
       }),
     });
-    const data = await resp.json().catch(() => ({}));
-    if (!resp.ok || data.success === "false" || data.success === false) {
-      return res.status(502).json({ error: data.message || "falha no FormSubmit" });
+    const raw = await resp.text();
+    let data = {};
+    try { data = JSON.parse(raw); } catch {}
+
+    const ok = resp.ok && (data.success === true || data.success === "true");
+    if (!ok) {
+      return res.status(502).json({
+        error: data.message || `FormSubmit HTTP ${resp.status}: ${raw.slice(0, 200)}`,
+      });
     }
     return res.status(200).json({ ok: true });
   } catch (err) {
