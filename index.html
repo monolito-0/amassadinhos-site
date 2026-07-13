@@ -510,23 +510,27 @@ document.getElementById('news-form').addEventListener('submit', async e => {
   btn.disabled = true;
   btn.textContent = 'enviando…';
   try {
+    const data = new FormData();
+    data.append('email', form.email.value);
+    data.append('_subject', 'Novo inscrito na newsletter do site');
+    data.append('_template', 'table');
+    data.append('_captcha', 'false');
+
     const resp = await fetch('https://formsubmit.co/ajax/amassadinhos.oficial@gmail.com', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({
-        email: form.email.value,
-        _subject: 'Novo inscrito na newsletter do site',
-        _template: 'table',
-        _captcha: 'false'
-      })
+      headers: { 'Accept': 'application/json' },
+      body: data
     });
-    if (!resp.ok) throw new Error('falha no envio');
+    const result = await resp.json().catch(() => ({}));
+    if (!resp.ok || result.success === 'false' || result.success === false) {
+      throw new Error(result.message || ('HTTP ' + resp.status));
+    }
     document.querySelector('.news').innerHTML =
       '<p style="text-align:center;width:100%">💌 e-mail recebido! obrigado — novidades do canal em breve na sua caixinha.</p>';
   } catch (err) {
     btn.disabled = false;
     btn.textContent = 'quero receber';
-    alert('Ops, não consegui enviar agora. Tenta de novo daqui a pouco?');
+    alert('Ops, não consegui enviar: ' + err.message);
   }
 });
 
